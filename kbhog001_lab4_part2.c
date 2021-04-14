@@ -12,56 +12,78 @@
 #include "simAVRHeader.h"
 #endif
 
-enum LA_States { Wait, Ready, S1, S2, Reset } State;
+enum LA_States { Wait, S1, Inc, S2, Dec, Reset } State;
 
 void LED_latch()
 {
  switch(State) {
    case Wait:
-	if ( (PINA == 0x01) || (PINA == 0x02) || (PINA == 3) ){
-		State = Wait;
-	}
-	else {
-		State = Ready;
-	}
-	break;
-
-   case Ready:
-	if ( PINA == 0x03){
+	if (PINA == 0x03) {
 		State = Reset;
 	}
 	else if (PINA == 0x01){
 		State = S1;
 	}
-	else if (PINA == 0x02) {
-		State = S2;
-	}
-	else{
-		State = Ready;
+	else if (PINA == 0x02){
+                State = S2;
+        }
+	else {
+		State = Wait;
 	}
 	break;
   
    case S1:
-	if (PINA == 0x03){
-		State = Reset;
-	}
-	else if (PINA == 0x02){
+	if (PINA == 0x02){
 		State = S2;
 	}
-	else{ 
+	else if (PINA == 0x00){
 		State = Wait;
 	}
+	else {
+		State = Inc;
+	}
+	break;
+
+   case Inc:
+	if (PINA == 0x03){
+                State = Reset;
+        }
+        else if (PINA == 0x02){
+                State = S2;
+        }
+	else if (PINA == 0x01){
+		State = Inc;
+	}
+        else{
+                State = Wait;
+        }
+	break;
 
    case S2:
-	if (PINA == 0x03){
-		State = Reset;
-	}
-	else if (PINA == 0x01){
+	if (PINA == 0x01){
 		State = S1;
 	}
-	else{
-		State = Wait;
+	else if (PINA == 0x00){
+                State = Wait;
+        }
+	else {
+		State = Dec;
 	}
+	break;
+
+   case Dec:
+        if (PINA == 0x03){
+                State = Reset;
+        }
+        else if (PINA == 0x02){
+                State = Dec;
+        }
+        else if (PINA == 0x01){
+                State = S1;
+        }
+        else{
+                State = Wait;
+        }
 	break;
 
    default:
@@ -73,13 +95,13 @@ void LED_latch()
    case Wait:
 	break;
 
-   case Ready:
-	break;
-
    case S1:
-	if (PORTC < 0x0A){
+	if (PORTC < 0x09){
 		PORTC = PORTC + 1;
 	}
+	break;
+
+   case Inc:
 	break;
    
    case S2:
@@ -88,7 +110,11 @@ void LED_latch()
 	}
 	break;
 
+   case Dec:
+	break;
+
    case Reset:
+	PORTC = 0x00;
 	break;
 
    default:
