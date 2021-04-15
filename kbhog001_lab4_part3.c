@@ -56,9 +56,12 @@ void LED_latch()
 	else if (PINA == 0x80){
                 State = Lock;
         }
-        else{
-                State = Start;
+        else if (PINA == 0x00){
+                State = Check;
         }
+	else {
+		State = Start;
+	}
 	break;
 
    case S1:
