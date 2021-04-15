@@ -12,7 +12,7 @@
 #include "simAVRHeader.h"
 #endif
 
-enum LA_States { Start, Wait, Check, S1, Lock } State;
+enum LA_States { Start, Wait, Check, S1, Lock, Check2, S2, Check3, S3 } State;
 
 void LED_latch()
 {
@@ -50,7 +50,7 @@ void LED_latch()
 	break;
 
    case Check:
-	if (PINA == 0x02){
+	if (PINA == 0x01){
                 State = S1;
         }
 	else if (PINA == 0x80){
@@ -65,13 +65,73 @@ void LED_latch()
 	break;
 
    case S1:
-	 if (PINA == 0x80){
+	if (PINA == 0x80){
                 State = Lock;
         }
+   	else if (PINA == 0x01){
+		State = S1;
+	}
+	else if (PINA == 0x00){
+		State = Check2;
+	}
 	else {
 		State = Start;
-	}	break;		
+	}
 	break;		
+
+   case Check2:
+        if (PINA == 0x02){
+                State = S2;
+        }
+        else if (PINA == 0x80){
+                State = Lock;
+        }
+        else if (PINA == 0x00){
+                State = Check2;
+        }
+        else {
+                State = Start;
+        }
+        break;
+
+   case S2:
+        if (PINA == 0x80){
+                State = Lock;
+        }
+        else if (PINA == 0x02){
+                State = S2;
+        }
+        else if (PINA == 0x00){
+                State = Check3;
+        }
+        else {
+                State = Start;
+        }       break;
+        break;
+
+   case Check3:
+        if (PINA == 0x01){
+                State = S3;
+        }
+        else if (PINA == 0x80){
+                State = Lock;
+        }
+        else if (PINA == 0x00){
+                State = Check3;
+        }
+        else {
+                State = Start;
+        }
+        break;
+
+   case S3:
+        if (PINA == 0x80){
+                State = Lock;
+        }
+        else {
+                State = Start;
+        }       break;
+        break;
 
    default:
 	State = Start;
@@ -93,13 +153,25 @@ void LED_latch()
 	break;
    
    case S1:
-	if ( PORTB == 0x01 ){
-		PORTB = 0x00;
-	}
-	else {
-		PORTB = 0x01;
-	}
 	break;
+
+   case Check2:
+	break;
+
+   case S2:
+	break;
+
+   case Check3:
+	break;
+
+   case S3:
+	if ( PORTB == 0x01 ){
+                PORTB = 0x00;
+        }
+        else {
+                PORTB = 0x01;
+        }
+        break;
 
    default:
 	break;
