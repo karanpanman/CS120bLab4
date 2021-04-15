@@ -1,7 +1,7 @@
-*	Author: Karan Bhogal
+/*	Author: Karan Bhogal
 *	  *  Partner(s) Name: 
 *	    *	Lab Section: 21
-*	      *	Assignment: Lab #4  Exercise #3
+*	      *	Assignment: Lab #4  Exercise #4
 *	        *	Exercise Description: [optional - include for your own benefit]
 *	          *
 *	            *	I acknowledge all content contained herein, excluding template or example
