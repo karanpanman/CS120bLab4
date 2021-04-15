@@ -18,14 +18,15 @@ void LED_latch()
 {
  switch(State) {
    case Start:
-	if (PINA != 0x04) {
-		State = Start;	
-	}
-	else if (PINA == 0x80){
+
+	if (PINA == 0x80){
 		State = Lock;
 	}
+	else if (PINA == 0x04) {
+		State = Wait;	
+	}
 	else {
-		State = Wait;
+		State = Start;
 	}
 	break;
   
@@ -42,6 +43,9 @@ void LED_latch()
         }
 	else if (PINA == 0x00){
 		State = Check;
+	}
+	else {
+		State = Start;
 	}
 	break;
 
@@ -67,7 +71,7 @@ void LED_latch()
 	break;
 
    default:
-	State = Wait;
+	State = Start;
 	break;
   } //transitions
 
